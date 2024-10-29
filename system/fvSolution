@@ -1,0 +1,107 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+PIMPLE
+{
+    nOuterCorrectors 1;       // Number of outer correction loops
+    nCorrectors      2;       // Number of pressure-velocity corrections
+    nNonOrthogonalCorrectors 0;
+    momentumPredictor yes;
+    transonic         yes;    // If relevant, enables handling of transonic flows
+    residualControl
+    {
+        p               1e-5;
+        U               1e-6;
+        T               1e-6;
+    }
+}
+solvers
+{
+    "(rho|rhoFinal|rhoU|rhoE|e)"
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-08;
+        relTol          0;
+    }
+    eFinal
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-09;
+        relTol          0.0;
+    }
+
+    U
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        nSweeps         2;
+        tolerance       1e-06;
+        relTol          0.01;
+    }
+
+    UFinal
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        nSweeps         2;
+        tolerance       1e-06;
+        relTol          0;
+    }
+
+    p
+    {
+        solver          smoothSolver;
+        tolerance       1e-05;
+        relTol          0.1;
+        smoother        GaussSeidel;
+        nPreSweeps      0;
+        nPostSweeps     2;
+        nFinestSweeps   2;
+    }
+
+    pFinal
+    {
+        solver          smoothSolver;
+        tolerance       1e-05;
+        relTol          0;
+        smoother        GaussSeidel;
+        nPreSweeps      0;
+        nPostSweeps     2;
+        nFinestSweeps   2;
+    }
+
+    T
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        nSweeps         2;
+        tolerance       1e-06;
+        relTol          0.01;
+    }
+
+    TFinal
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        nSweeps         2;
+        tolerance       1e-06;
+        relTol          0;
+    }
+}
+
+// ************************************************************************* //
